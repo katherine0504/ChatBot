@@ -14,14 +14,10 @@ client = MongoClient(uri)
 db = client.kathytest
 collect = db.travel
 
-idcnt = collect.find({}).sort("_id", -1)[0]['_id']
-idcnt = idcnt + 1
-
 def store(obj):
 	collect.insert_one(obj)
 
 def saveInfo(city, title, url):
-	global idcnt
 	url = 'http://taiwan.net.tw/' + url
 	res = requests.get(url)
 	bsObj = BeautifulSoup(res.content, "html.parser")
@@ -31,12 +27,12 @@ def saveInfo(city, title, url):
 	info = bsObj.select(".attractionsLeft p")
 	info = ''.join(str(e) for e in info)
 	info = info.replace("<p>", "").replace("</p>", "")
+	print(info)
 	details = bsObj.select(".attractionsDl dd")
 	recommend = bsObj.select(".RecommendNumber")
 	rec = ''.join(str(e) for e in recommend)
 	recommend = re.sub('<[^>]*>', '', rec)
 	obj = {
-		'_id': idcnt,
 		'city': city,
 		'name': title,
 		'url': url,
@@ -83,7 +79,6 @@ def saveInfo(city, title, url):
 			trans = str(dd)
 			trans = trans.replace("<dd>", "").replace("</dd>", "").replace("<p>", "").replace("</p>", "").replace("<br>", "").replace("<br/>", "")
 			obj['trans'] = trans
-	idcnt = idcnt + 1
 	store(obj)
 
 
