@@ -8,10 +8,11 @@ from fsm import TocMachine
 
 
 API_TOKEN = "328147346:AAFMRzY25JMXDRfthCmVh6wUKr9n_7ZNpuw"
-WEBHOOK_URL = "https://7d727d46.ngrok.io/hook"
+WEBHOOK_URL = "https://7b3b9feb.ngrok.io/hook"
 
 app = Flask(__name__)
 bot = telegram.Bot(token=API_TOKEN)
+
 machine = TocMachine(
     states=[
         'user',
@@ -28,7 +29,7 @@ machine = TocMachine(
             'trigger': 'advance',
             'source': 'user',
             'dest': 'state1',
-            'conditions': 'is_going_to_state1'
+            'conditions': 'is_going_to_state1',
         },
         {
             'trigger': 'advance',
@@ -47,6 +48,12 @@ machine = TocMachine(
             'source': 'state3',
             'dest': 'state4',
             'conditions': 'is_going_to_state4'
+        },
+        {
+            'trigger': 'advance',
+            'source': 'state3',
+            'dest': 'state7',
+            'conditions': 'not_interested'
         },
         {
             'trigger': 'advance',
@@ -69,8 +76,8 @@ machine = TocMachine(
         {
             'trigger': 'go_back',
             'source': [
-                'state5'
-                'state6'
+                'state5',
+                'state6',
                 'state7'
             ],
             'dest': 'user'
@@ -93,8 +100,9 @@ def _set_webhook():
 
 @app.route('/hook', methods=['POST'])
 def webhook_handler():
+    global bot
     update = telegram.Update.de_json(request.get_json(force=True), bot)
-    machine.advance(update)
+    machine.advance(update, bot)
     return 'ok'
 
 

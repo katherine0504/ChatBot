@@ -45,12 +45,13 @@ class TocMachine(GraphMachine):
             **machine_configs
         )
 
-    def is_going_to_state1(self, update):
+    def is_going_to_state1(self, update, bot):
         text = update.message.text
         return text == '想旅行'
 
-    def is_going_to_state2(self, update):
+    def is_going_to_state2(self, update, bot):
         text = update.message.text
+        text = text.replace("台", "臺")
         found = 0
         for post in collect.find():
             if post['city'] == text:
@@ -59,10 +60,10 @@ class TocMachine(GraphMachine):
                 break
         
         if found == 0:
-            update.message.reply_text("找不到這個縣市唷")
+            update.message.reply_text("找不到這個縣市唷\n請你再輸入一次")
         return found
 
-    def is_going_to_state3(self, update):
+    def is_going_to_state3(self, update, bot):
         text = update.message.text
         found = 0
         for post in collect.find():
@@ -72,50 +73,56 @@ class TocMachine(GraphMachine):
                 break
         
         if found == 0:
-            update.message.reply_text("找不到這個景點唷")
+            update.message.reply_text("找不到這個景點唷\n請你再輸入一次")
         return found
     
-    def is_going_to_state4(self, update):
+    def is_going_to_state4(self, update, bot):
         text = update.message.text
         return text == '有'
 
-    def is_going_to_state5(self, update):
+    def is_going_to_state5(self, update, bot):
         text = update.message.text
         return text == '開車'
 
-    def is_going_to_state6(self, update):
+    def is_going_to_state6(self, update, bot):
         text = update.message.text
         return text == '大眾運輸'
 
-    def is_going_to_state7(self, update):
+    def is_going_to_state7(self, update, bot):
         text = update.message.text
         return text == '不想去了'
-    
-    def on_enter_state1(self, update):
-        update.message.reply_text("想去哪個縣市呢？")
 
-    def on_exit_state1(self, update):
+    def not_interested(selt, update, bot):
+        text = update.message.text
+        return text == '沒有'
+
+    def on_exit_state1(self, update, bot):
         print('Leaving state1')
     
-    def on_exit_state2(self, update):
+    def on_exit_state2(self, update, bot):
         print('Leaving state2')
 
-    def on_exit_state3(self, update):
+    def on_exit_state3(self, update, bot):
         print('Leaving state3')
 
-    def on_exit_state4(self, update):
+    def on_exit_state4(self, update, bot):
         print('Leaving state4')
 
-    def on_exit_state5(self, update):
+    def on_exit_state5(self, update, bot):
         print('Leaving state5')
 
-    def on_exit_state6(self, update):
+    def on_exit_state6(self, update, bot):
         print('Leaving state6')
     
-    def on_exit_state7(self, update):
+    def on_exit_state7(self, update, bot):
         print('Leaving state7')    
 
-    def on_enter_state2(self, update):
+    def on_enter_state1(self, update, bot):
+        chat_id = update.message.chat_id
+        bot.send_photo(chat_id, photo='http://www.shining.org.tw/uploads/taiwan-map-wt-2013.gif')
+        update.message.reply_text("想去哪個縣市呢？")
+
+    def on_enter_state2(self, update, bot):
         cityname = getcity()
         print(cityname)
         out = ""
@@ -127,7 +134,7 @@ class TocMachine(GraphMachine):
         update.message.reply_text("你想更深入知道哪個景點呢？")
 
     
-    def on_enter_state3(self, update):
+    def on_enter_state3(self, update, bot):
         locname = getloc()
         print(locname)
         out = ""
@@ -137,7 +144,7 @@ class TocMachine(GraphMachine):
         update.message.reply_text(out)
         update.message.reply_text("對這個景點有興趣嗎？")
 
-    def on_enter_state4(self, update):
+    def on_enter_state4(self, update, bot):
         locname = getloc()
         print(locname)
         out = ""
@@ -151,7 +158,7 @@ class TocMachine(GraphMachine):
         update.message.reply_text(out)
         update.message.reply_text("你想怎麼去？\n(開車 / 大眾運輸 / 不想去了)")
 
-    def on_enter_state5(self, update):
+    def on_enter_state5(self, update, bot):
         locname = getloc()
         print(locname)
         out = ""
@@ -160,8 +167,9 @@ class TocMachine(GraphMachine):
         update.message.reply_text("以下是開車去該景點的方法：")
         update.message.reply_text(out)
         update.message.reply_text("祝你玩得開心～")
+        self.go_back(update)
 
-    def on_enter_state6(self, update):
+    def on_enter_state6(self, update, bot):
         locname = getloc()
         print(locname)
         out = ""
@@ -170,7 +178,8 @@ class TocMachine(GraphMachine):
         update.message.reply_text("以下是搭乘大眾運輸工具去該景點的方法：")
         update.message.reply_text(out)
         update.message.reply_text("祝你玩得開心～")
+        self.go_back(update)
     
-    def on_enter_state7(self, update):
+    def on_enter_state7(self, update, bot):
         update.message.reply_text("好吧 TT\n有需要再跟我說")
         self.go_back(update)
