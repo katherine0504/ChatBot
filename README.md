@@ -55,6 +55,9 @@ python3 app.py
 ## Finite State Machine
 ![fsm](./img/flow.png)
 
+## Input Flow
+![input_flow](./img/input_flow.jpg)
+
 ## Usage
 The initial state is set to `user`.
 
