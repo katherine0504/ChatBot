@@ -6,7 +6,8 @@ TravelTaiwan is a  telegram bot based on a finite state machine.
 
 It can help you with planning your trips in Taiwan by giving you a list of places to visit, as well as the information of that scenic attraction provided by [Tourism Bureau, Republic of China (Taiwan)](http://eng.taiwan.net.tw/).
 
-**Note that this bot only supports Chinese inputs**
+**Note that this bot only supports Chinese or English inputs**
+
 
 ## Setup
 
@@ -52,12 +53,21 @@ python3 app.py
 ```
 
 ## Finite State Machine
-![fsm](./img/show-fsm.png)
+![fsm](./img/flow.png)
 
 ## Usage
 The initial state is set to `user`.
 
+You can enter either "中文" or "English" to choose your language from there.
+
+You can also type "關於我" or "About me" to see the information about this bot.
+
+From other states, you can enter the input according to the instructions provided by the bot. If you entered a message that the bot cannot understand, you can re-enter according to its instructions.
+
+The bot will retreive data according to your quests, and will ask the you to re-submit if that data is not found in the database.
+
 After you finished a complete quest service, it will `go_back` to `user` state.
+
 
 ## Author
 [Kathy Shiu](https://github.com/katherine0504)
